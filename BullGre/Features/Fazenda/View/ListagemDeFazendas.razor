@@ -1,7 +1,117 @@
 ﻿@page "/fazendas"
+@using BullGre.Features.Fazenda.Model
+@inject BullGre.Features.Fazenda.Service.FazendaService service
+@inject IJSRuntime js
+@inject NavigationManager navigation
 
 <PageTitle>Fazendas</PageTitle>
 
-@code {
+<div>
+    <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #094005;">
+        <a class="navbar-brand text-white" style="padding: 10px;">Fazendas</a>
+        <div class="d-flex">
+            <button type="button" class="btn btn-success" @onclick="() => Cadastrar()">
+                <i class="oi oi-plus" />
+            </button>
+        </div>
+    </nav>
+    <div class="container-fluid border rounded" style="padding: 5px;">
+        <div class="row">
+            <div class="col-3" style="padding-right: 2px;">
+                <input type="text" class="form-control" placeholder="Nome da fazenda" />
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary" type="button">Pesquisar</button>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-sm table-striped table-hover">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Id</th>
+                    <th>Nome</th>
+                    <th>Cidade</th>
+                    <th>Hectares</th>
+                    <th><span class="float-sm-end">Ações</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (fazendas == null)
+                {
+                    <tr>
+                        <td colspan="5">
+                            <div class="spinner-border text-primary m-1" role="status"></div>
+                            Carregando fazendas...
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @if (fazendas.Any())
+                    {
+                        @foreach (var fazenda in fazendas)
+                        {
+                            <tr>
+                                <td>@fazenda.Id</td>
+                                <td>@fazenda.Nome</td>
+                                <td>@fazenda.Cidade</td>
+                                <td>@fazenda.Hectares</td>
+                                <td>
+                                    <div class="float-sm-end">
+                                        <button type="button" class="btn btn-primary btn-sm" title="Alterar fazenda">
+                                            <div class="oi oi-pencil" />
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm" title="Apagar fazenda">
+                                            <div class="oi oi-trash" />
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="5"><b>Nenhuma fazenda cadastrada.</b></td></tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
+@code {
+    private IEnumerable<FazendaModel> fazendas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Listar();
+    }
+
+    private void Cadastrar()
+    {
+        navigation.NavigateTo("/CadastroFazenda");
+    }
+
+    private void Atualizar()
+    {
+
+    }
+
+    private void Apagar()
+    {
+
+    }
+
+    private async void Listar()
+    {
+        try
+        {
+            fazendas = await service.ListarFazendas();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
 }

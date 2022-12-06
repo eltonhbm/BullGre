@@ -1,0 +1,64 @@
+﻿@page "/CadastroFazenda"
+@page "/CadastroFazenda/{IdFazenda:int}"
+@using BullGre.Features.Fazenda.Model
+@inject BullGre.Features.Fazenda.Service.FazendaService service
+@inject NavigationManager navigation
+
+<h4>Cadastro de fazenda</h4>
+<EditForm Model="@Fazenda" style="max-width: 250px;" class="row g-2" OnValidSubmit="Gravar">
+    <div class="mb-3">
+        <label for="txtNome" class="form-label">Nome</label>
+        <input @bind="@Fazenda.Nome" type="text" class="form-control" id="txtNome" placeholder="Nome da fazenda" required autofocus>
+    </div>
+    <div class="mb-3">
+        <label for="txtCidade" class="form-label">Cidade</label>
+        <input @bind="@Fazenda.Cidade" type="text" class="form-control" id="txtCidade" placeholder="Nome da cidade">
+    </div>
+    <div class="mb-3">
+        <label for="txtHectares" class="form-label">Hectares</label>
+        <input @bind="@Fazenda.Hectares" type="number" class="form-control" id="txtHectares">
+    </div>
+    <div style="padding-top: 8px;" class="float-end">
+        <button type="reset" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+        <button type="submit" class="btn btn-success">Gravar</button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int IdFazenda { get; set; }
+    private FazendaModel Fazenda = new FazendaModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdFazenda > 0)
+        {
+        }
+    }
+
+    private async Task Gravar()
+    {
+        try
+        {
+            if (IdFazenda > 0)
+            {
+                await service.Atualizar(Fazenda);
+            }
+            else
+            {
+                await service.Inserir(Fazenda);
+            }
+
+            navigation.NavigateTo("/fazendas");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private void Cancelar()
+    {
+        navigation.NavigateTo("/fazendas");
+    }
+}
